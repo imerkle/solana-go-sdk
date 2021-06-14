@@ -90,3 +90,13 @@ type GeneralResponse struct {
 	ID      uint64        `json:"id"`
 	Error   ErrorResponse `json:"error"`
 }
+
+func (s *Client) CallRequest(ctx context.Context, method string, params []interface{}) (interface{}, error) {
+	var out interface{}
+	var err error
+
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}

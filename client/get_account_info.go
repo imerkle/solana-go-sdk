@@ -48,6 +48,26 @@ type GetAccountInfoResponse struct {
 	Data      interface{} `json:"data"`
 }
 
+type GetAccountInfoParsedResponse struct {
+	Lamports  uint64  `json:"lamports"`
+	Owner     string  `json:"owner"`
+	Excutable bool    `json:"excutable"`
+	RentEpoch uint64  `json:"rentEpoch"`
+	Data      AccData `json:"data"`
+}
+
+type Initialized struct {
+	Authority     string        `json:"authority"`
+	BlockHash     string        `json:"blockhash"`
+	FeeCalculator FeeCalculator `json:"feeCalculator"`
+}
+type Nonce struct {
+	Initialized Initialized `json:"initialized"`
+}
+type AccData struct {
+	Nonce Nonce `json:"nonce"`
+}
+
 func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAccountInfoConfig) (GetAccountInfoResponse, error) {
 	res := struct {
 		GeneralResponse
@@ -62,6 +82,23 @@ func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAcco
 	}
 	if res.Error != (ErrorResponse{}) {
 		return GetAccountInfoResponse{}, errors.New(res.Error.Message)
+	}
+	return res.Result.Value, nil
+}
+func (s *Client) GetAccountInfoParsed(ctx context.Context, account string) (GetAccountInfoParsedResponse, error) {
+	res := struct {
+		GeneralResponse
+		Result struct {
+			Context Context                      `json:"context"`
+			Value   GetAccountInfoParsedResponse `json:"value"`
+		} `json:"result"`
+	}{}
+	err := s.request(ctx, "getAccountInfo", []interface{}{account, map[string]interface{}{"encoding": "jsonParsed"}}, &res)
+	if err != nil {
+		return GetAccountInfoParsedResponse{}, err
+	}
+	if res.Error != (ErrorResponse{}) {
+		return GetAccountInfoParsedResponse{}, errors.New(res.Error.Message)
 	}
 	return res.Result.Value, nil
 }

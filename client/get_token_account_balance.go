@@ -1,6 +1,8 @@
 package client
 
-import "context"
+import (
+	"context"
+)
 
 type GetTokenAccountBalance struct {
 	Amount         string `json:"amount"`

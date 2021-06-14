@@ -6,10 +6,8 @@ import (
 )
 
 type GetRecentBlockHashResponse struct {
-	Blockhash     string `json:"blockhash"`
-	FeeCalculator struct {
-		LamportsPerSignature uint64 `json:"lamportsPerSignature"`
-	} `json:"feeCalculator"`
+	Blockhash     string        `json:"blockhash"`
+	FeeCalculator FeeCalculator `json:"feeCalculator"`
 }
 
 func (s *Client) GetRecentBlockhash(ctx context.Context) (GetRecentBlockHashResponse, error) {
