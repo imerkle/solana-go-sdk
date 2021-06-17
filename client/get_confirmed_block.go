@@ -1,6 +1,10 @@
 package client
 
-import "context"
+import (
+	"context"
+
+	"github.com/portto/solana-go-sdk/types"
+)
 
 type Reward struct {
 	Pubkey      string `json:"pubkey"`
@@ -21,8 +25,8 @@ type TransactionWithMeta struct {
 	Transaction Transaction     `json:"transaction"`
 }
 type ParsedTransactionWithMeta struct {
-	Meta        TransactionMeta   `json:"meta"`
-	Transaction ParsedTransaction `json:"transaction"`
+	Meta        TransactionMeta         `json:"meta"`
+	Transaction types.ParsedTransaction `json:"transaction"`
 }
 type GetConfirmBlockParsedResponse struct {
 	Blockhash         string                      `json:"blockhash"`

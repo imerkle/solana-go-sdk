@@ -1,6 +1,10 @@
 package client
 
-import "context"
+import (
+	"context"
+
+	"github.com/portto/solana-go-sdk/types"
+)
 
 type GetConfirmedTransactionResponse struct {
 	Slot        uint64          `json:"slot"`
@@ -9,9 +13,9 @@ type GetConfirmedTransactionResponse struct {
 }
 
 type GetConfirmedTransactionParsedResponse struct {
-	Slot        uint64            `json:"slot"`
-	Meta        TransactionMeta   `json:"meta"`
-	Transaction ParsedTransaction `json:"transaction"`
+	Slot        uint64                  `json:"slot"`
+	Meta        TransactionMeta         `json:"meta"`
+	Transaction types.ParsedTransaction `json:"transaction"`
 }
 
 func (s *Client) GetConfirmedTransaction(ctx context.Context, txhash string) (GetConfirmedTransactionResponse, error) {

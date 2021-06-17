@@ -6,10 +6,15 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/mr-tron/base58"
 	"github.com/portto/solana-go-sdk/common"
 )
 
 type Signature []byte
+
+func (p Signature) ToBase58() string {
+	return base58.Encode(p[:])
+}
 
 type Transaction struct {
 	Signatures []Signature

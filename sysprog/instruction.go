@@ -22,13 +22,74 @@ const (
 	InstructionTransferWithSeed
 )
 
+type CreateAccountInstruction struct {
+	Instruction Instruction
+	Lamports    uint64
+	Space       uint64
+	Owner       common.PublicKey
+}
+type AssignInstruction struct {
+	Instruction       Instruction
+	AssignToProgramID common.PublicKey
+}
+type TransferInstruction struct {
+	Instruction Instruction
+	Lamports    uint64
+}
+
+type CreateAccountWithSeedInstruction struct {
+	Instruction Instruction
+	Base        common.PublicKey
+	SeedLen     uint64
+	Seed        string
+	Lamports    uint64
+	Space       uint64
+	ProgramID   common.PublicKey
+}
+type AdvanceNonceAccountInstruction struct {
+	Instruction Instruction
+}
+type WithdrawNonceAccountInstruction struct {
+	Instruction Instruction
+	Lamports    uint64
+}
+type InitializeNonceAccountInstruction struct {
+	Instruction Instruction
+	Auth        common.PublicKey
+}
+type AuthorizeNonceAccountInstruction struct {
+	Instruction Instruction
+	Auth        common.PublicKey
+}
+type AllocateInstruction struct {
+	Instruction Instruction
+	Space       uint64
+}
+type AllocateWithSeedInstruction struct {
+	Instruction Instruction
+	Base        common.PublicKey
+	SeedLen     uint64
+	Seed        string
+	Space       uint64
+	ProgramID   common.PublicKey
+}
+type AssignWithSeedInstruction struct {
+	Instruction       Instruction
+	Base              common.PublicKey
+	SeedLen           uint64
+	Seed              string
+	AssignToProgramID common.PublicKey
+}
+type TransferWithSeedInstruction struct {
+	Instruction Instruction
+	Lamports    uint64
+	SeedLen     uint64
+	Seed        string
+	ProgramID   common.PublicKey
+}
+
 func CreateAccount(fromAccount, newAccount, owner common.PublicKey, initLamports, accountSpace uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Lamports    uint64
-		Space       uint64
-		Owner       common.PublicKey
-	}{
+	data, err := common.SerializeData(CreateAccountInstruction{
 		Instruction: InstructionCreateAccount,
 		Lamports:    initLamports,
 		Space:       accountSpace,
@@ -49,10 +110,7 @@ func CreateAccount(fromAccount, newAccount, owner common.PublicKey, initLamports
 }
 
 func Assign(accountPubkey, assignToProgramID common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction       Instruction
-		AssignToProgramID common.PublicKey
-	}{
+	data, err := common.SerializeData(AssignInstruction{
 		Instruction:       InstructionAssign,
 		AssignToProgramID: assignToProgramID,
 	})
@@ -70,10 +128,7 @@ func Assign(accountPubkey, assignToProgramID common.PublicKey) types.Instruction
 }
 
 func Transfer(from, to common.PublicKey, lamports uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Lamports    uint64
-	}{
+	data, err := common.SerializeData(TransferInstruction{
 		Instruction: InstructionTransfer,
 		Lamports:    lamports,
 	})
@@ -90,17 +145,8 @@ func Transfer(from, to common.PublicKey, lamports uint64) types.Instruction {
 		Data:      data,
 	}
 }
-
 func CreateAccountWithSeed(fromPubkey, newAccountPubkey, basePubkey, programID common.PublicKey, seed string, lamports, space uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Base        common.PublicKey
-		SeedLen     uint64
-		Seed        string
-		Lamports    uint64
-		Space       uint64
-		ProgramID   common.PublicKey
-	}{
+	data, err := common.SerializeData(CreateAccountWithSeedInstruction{
 		Instruction: InstructionCreateAccountWithSeed,
 		Base:        basePubkey,
 		SeedLen:     uint64(len(seed)),
@@ -130,9 +176,7 @@ func CreateAccountWithSeed(fromPubkey, newAccountPubkey, basePubkey, programID c
 }
 
 func AdvanceNonceAccount(noncePubkey, authPubkey common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-	}{
+	data, err := common.SerializeData(AdvanceNonceAccountInstruction{
 		Instruction: InstructionAdvanceNonceAccount,
 	})
 	if err != nil {
@@ -151,10 +195,7 @@ func AdvanceNonceAccount(noncePubkey, authPubkey common.PublicKey) types.Instruc
 }
 
 func WithdrawNonceAccount(noncePubkey, authPubkey, toPubkey common.PublicKey, lamports uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Lamports    uint64
-	}{
+	data, err := common.SerializeData(WithdrawNonceAccountInstruction{
 		Instruction: InstructionWithdrawNonceAccount,
 		Lamports:    lamports,
 	})
@@ -176,10 +217,7 @@ func WithdrawNonceAccount(noncePubkey, authPubkey, toPubkey common.PublicKey, la
 }
 
 func InitializeNonceAccount(noncePubkey, authPubkey common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Auth        common.PublicKey
-	}{
+	data, err := common.SerializeData(InitializeNonceAccountInstruction{
 		Instruction: InstructionInitializeNonceAccount,
 		Auth:        authPubkey,
 	})
@@ -199,10 +237,7 @@ func InitializeNonceAccount(noncePubkey, authPubkey common.PublicKey) types.Inst
 }
 
 func AuthorizeNonceAccount(noncePubkey, oriAuthPubkey, newAuthPubkey common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Auth        common.PublicKey
-	}{
+	data, err := common.SerializeData(AuthorizeNonceAccountInstruction{
 		Instruction: InstructionAuthorizeNonceAccount,
 		Auth:        newAuthPubkey,
 	})
@@ -221,10 +256,7 @@ func AuthorizeNonceAccount(noncePubkey, oriAuthPubkey, newAuthPubkey common.Publ
 }
 
 func Allocate(accountPubkey common.PublicKey, space uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Space       uint64
-	}{
+	data, err := common.SerializeData(AllocateInstruction{
 		Instruction: InstructionAllocate,
 		Space:       space,
 	})
@@ -242,14 +274,7 @@ func Allocate(accountPubkey common.PublicKey, space uint64) types.Instruction {
 }
 
 func AllocateWithSeed(accountPubkey, basePubkey, programID common.PublicKey, seed string, space uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Base        common.PublicKey
-		SeedLen     uint64
-		Seed        string
-		Space       uint64
-		ProgramID   common.PublicKey
-	}{
+	data, err := common.SerializeData(AllocateWithSeedInstruction{
 		Instruction: InstructionAllocateWithSeed,
 		Base:        basePubkey,
 		SeedLen:     uint64(len(seed)),
@@ -271,13 +296,7 @@ func AllocateWithSeed(accountPubkey, basePubkey, programID common.PublicKey, see
 	}
 }
 func AssignWithSeed(accountPubkey, assignToProgramID, basePubkey common.PublicKey, seed string) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction       Instruction
-		Base              common.PublicKey
-		SeedLen           uint64
-		Seed              string
-		AssignToProgramID common.PublicKey
-	}{
+	data, err := common.SerializeData(AssignWithSeedInstruction{
 		Instruction:       InstructionAssignWithSeed,
 		Base:              basePubkey,
 		SeedLen:           uint64(len(seed)),
@@ -299,13 +318,7 @@ func AssignWithSeed(accountPubkey, assignToProgramID, basePubkey common.PublicKe
 }
 
 func TransferWithSeed(from, to, base, programID common.PublicKey, seed string, lamports uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Lamports    uint64
-		SeedLen     uint64
-		Seed        string
-		ProgramID   common.PublicKey
-	}{
+	data, err := common.SerializeData(TransferWithSeedInstruction{
 		Instruction: InstructionTransferWithSeed,
 		Lamports:    lamports,
 		SeedLen:     uint64(len(seed)),

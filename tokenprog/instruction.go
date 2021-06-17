@@ -27,15 +27,76 @@ const (
 	InstructionInitializeAccount2
 )
 
+type InitializeMintInstruction struct {
+	Instruction     Instruction
+	Decimals        uint8
+	MintAuthority   common.PublicKey
+	Option          bool
+	FreezeAuthority common.PublicKey
+}
+type InitializeAccountInstruction struct {
+	Instruction Instruction
+}
+type InitializeMultisigInstruction struct {
+	Instruction     Instruction
+	MinimumRequired uint8
+}
+type TransferInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+}
+type ApproveInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+}
+type RevokeInstruction struct {
+	Instruction Instruction
+}
+type MintToInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+}
+type BurnInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+}
+type CloseAccountInstruction struct {
+	Instruction Instruction
+}
+type FreezeAccountInstruction struct {
+	Instruction Instruction
+}
+type ThawAccountInstruction struct {
+	Instruction Instruction
+}
+type TransferCheckedInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+	Decimals    uint8
+}
+type ApproveCheckedInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+	Decimals    uint8
+}
+type MintToCheckedInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+	Decimals    uint8
+}
+type BurnCheckedInstruction struct {
+	Instruction Instruction
+	Amount      uint64
+	Decimals    uint8
+}
+type InitializeAccount2Instruction struct {
+	Instruction Instruction
+	Owner       common.PublicKey
+}
+
 // InitializeMint init a mint, if you don't need to freeze, pass the empty pubKey common.PublicKey{}
 func InitializeMint(decimals uint8, mint, mintAuthority common.PublicKey, freezeAuthority common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction     Instruction
-		Decimals        uint8
-		MintAuthority   common.PublicKey
-		Option          bool
-		FreezeAuthority common.PublicKey
-	}{
+	data, err := common.SerializeData(InitializeMintInstruction{
 		Instruction:     InstructionInitializeMint,
 		Decimals:        decimals,
 		MintAuthority:   mintAuthority,
@@ -58,9 +119,7 @@ func InitializeMint(decimals uint8, mint, mintAuthority common.PublicKey, freeze
 
 // InitializeAccount init a token account which can receive token
 func InitializeAccount(accountPublicKey, mintPublicKey, ownerPublickey common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-	}{
+	data, err := common.SerializeData(InitializeAccountInstruction{
 		Instruction: InstructionInitializeAccount,
 	})
 	if err != nil {
@@ -91,10 +150,7 @@ func InitializeMultisig(authPubkey common.PublicKey, signerPubkeys []common.Publ
 		panic("required number too big")
 	}
 
-	data, err := common.SerializeData(struct {
-		Instruction     Instruction
-		MinimumRequired uint8
-	}{
+	data, err := common.SerializeData(InitializeMultisigInstruction{
 		Instruction:     InstructionInitializeMultisig,
 		MinimumRequired: miniRequired,
 	})
@@ -119,10 +175,7 @@ func InitializeMultisig(authPubkey common.PublicKey, signerPubkeys []common.Publ
 }
 
 func Transfer(srcPubkey, destPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-	}{
+	data, err := common.SerializeData(TransferInstruction{
 		Instruction: InstructionTransfer,
 		Amount:      amount,
 	})
@@ -145,10 +198,7 @@ func Transfer(srcPubkey, destPubkey, authPubkey common.PublicKey, signerPubkeys 
 }
 
 func Approve(sourcePubkey, delegatePubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-	}{
+	data, err := common.SerializeData(ApproveInstruction{
 		Instruction: InstructionApprove,
 		Amount:      amount,
 	})
@@ -172,9 +222,7 @@ func Approve(sourcePubkey, delegatePubkey, authPubkey common.PublicKey, signerPu
 }
 
 func Revoke(srcPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-	}{
+	data, err := common.SerializeData(RevokeInstruction{
 		Instruction: InstructionRevoke,
 	})
 	if err != nil {
@@ -202,10 +250,7 @@ func SetAuthority() types.Instruction {
 }
 
 func MintTo(mintPubkey, destPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-	}{
+	data, err := common.SerializeData(MintToInstruction{
 		Instruction: InstructionMintTo,
 		Amount:      amount,
 	})
@@ -231,10 +276,7 @@ func MintTo(mintPubkey, destPubkey, authPubkey common.PublicKey, signerPubkeys [
 }
 
 func Burn(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-	}{
+	data, err := common.SerializeData(BurnInstruction{
 		Instruction: InstructionBurn,
 		Amount:      amount,
 	})
@@ -261,9 +303,7 @@ func Burn(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerPubkeys 
 
 // Close an account and transfer its all SOL to dest, only account's token balance is zero can be closed.
 func CloseAccount(accountPubkey, destPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-	}{
+	data, err := common.SerializeData(CloseAccountInstruction{
 		Instruction: InstructionCloseAccount,
 	})
 	if err != nil {
@@ -286,9 +326,7 @@ func CloseAccount(accountPubkey, destPubkey, authPubkey common.PublicKey, signer
 }
 
 func FreezeAccount(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-	}{
+	data, err := common.SerializeData(FreezeAccountInstruction{
 		Instruction: InstructionFreezeAccount,
 	})
 	if err != nil {
@@ -311,9 +349,7 @@ func FreezeAccount(accountPubkey, mintPubkey, authPubkey common.PublicKey, signe
 }
 
 func ThawAccount(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-	}{
+	data, err := common.SerializeData(ThawAccountInstruction{
 		Instruction: InstructionThawAccount,
 	})
 	if err != nil {
@@ -336,11 +372,7 @@ func ThawAccount(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerP
 }
 
 func TransferChecked(srcPubkey, destPubkey, mintPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64, decimals uint8) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-		Decimals    uint8
-	}{
+	data, err := common.SerializeData(TransferCheckedInstruction{
 		Instruction: InstructionTransferChecked,
 		Amount:      amount,
 		Decimals:    decimals,
@@ -366,11 +398,7 @@ func TransferChecked(srcPubkey, destPubkey, mintPubkey, authPubkey common.Public
 }
 
 func ApproveChecked(sourcePubkey, mintPubkey, delegatePubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64, decimals uint8) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-		Decimals    uint8
-	}{
+	data, err := common.SerializeData(ApproveCheckedInstruction{
 		Instruction: InstructionApproveChecked,
 		Amount:      amount,
 		Decimals:    decimals,
@@ -396,11 +424,7 @@ func ApproveChecked(sourcePubkey, mintPubkey, delegatePubkey, authPubkey common.
 }
 
 func MintToChecked(mintPubkey, destPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64, decimals uint8) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-		Decimals    uint8
-	}{
+	data, err := common.SerializeData(MintToCheckedInstruction{
 		Instruction: InstructionMintToChecked,
 		Amount:      amount,
 		Decimals:    decimals,
@@ -427,11 +451,7 @@ func MintToChecked(mintPubkey, destPubkey, authPubkey common.PublicKey, signerPu
 }
 
 func BurnChecked(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerPubkeys []common.PublicKey, amount uint64, decimals uint8) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Amount      uint64
-		Decimals    uint8
-	}{
+	data, err := common.SerializeData(BurnCheckedInstruction{
 		Instruction: InstructionBurnChecked,
 		Amount:      amount,
 		Decimals:    decimals,
@@ -458,10 +478,7 @@ func BurnChecked(accountPubkey, mintPubkey, authPubkey common.PublicKey, signerP
 }
 
 func InitializeAccount2(accountPubkey, mintPubkey, ownerPubkey common.PublicKey) types.Instruction {
-	data, err := common.SerializeData(struct {
-		Instruction Instruction
-		Owner       common.PublicKey
-	}{
+	data, err := common.SerializeData(InitializeAccount2Instruction{
 		Instruction: InstructionInitializeAccount2,
 		Owner:       ownerPubkey,
 	})

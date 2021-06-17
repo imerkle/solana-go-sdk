@@ -23,6 +23,9 @@ type Message struct {
 	Instructions    []CompiledInstruction
 }
 
+func (m *Message) GetUniqueSigners() []string {
+	return GetUniqueSigners(m.DecompileInstructions())
+}
 func (m *Message) Serialize() ([]byte, error) {
 	b := []byte{}
 	b = append(b, m.Header.NumRequireSignatures)

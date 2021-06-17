@@ -49,26 +49,3 @@ const (
 	EncodingBase64Zstd Encoding = "base64+zstd"
 	EncodingJson       Encoding = "json"
 )
-
-type ParsedTransaction struct {
-	Signatures []string      `json:"signatures"`
-	Message    ParsedMessage `json:"message"`
-}
-type ParsedMessage struct {
-	Header          MessageHeader       `json:"header"`
-	AccountKeys     []string            `json:"accountKeys"`
-	RecentBlockhash string              `json:"recentBlockhash"`
-	Instructions    []ParsedInstruction `json:"instructions"`
-}
-type ParsedInstruction struct {
-	Accounts  []string         `json:"accounts,omitempty"`
-	Data      string           `json:"data,omitempty"`
-	Parsed    *InstructionInfo `json:"parsed,omitempty"`
-	Program   string           `json:"program,omitempty"`
-	ProgramID string           `json:"programId"`
-}
-
-type InstructionInfo struct {
-	Info            map[string]interface{} `json:"info"`
-	InstructionType string                 `json:"type"`
-}
