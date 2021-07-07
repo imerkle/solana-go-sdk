@@ -49,7 +49,7 @@ func (s *Client) GetTokenAccountsByOwner(ctx context.Context, account string) ([
 		} `json:"result"`
 	}{}
 	params := []interface{}{account,
-		map[string]interface{}{"programId": common.TokenProgramID},
+		map[string]interface{}{"programId": common.TokenProgramID.ToBase58()},
 		map[string]interface{}{
 			"encoding": "jsonParsed",
 		}}
