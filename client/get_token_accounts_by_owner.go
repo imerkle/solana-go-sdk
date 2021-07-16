@@ -38,6 +38,7 @@ type Account struct {
 }
 type Accounts struct {
 	Account Account `json:"account"`
+	Pubkey  string  `json:"pubkey,omitempty"`
 }
 
 func (s *Client) GetTokenAccountsByOwner(ctx context.Context, account string) ([]Accounts, error) {
@@ -50,6 +51,26 @@ func (s *Client) GetTokenAccountsByOwner(ctx context.Context, account string) ([
 	}{}
 	params := []interface{}{account,
 		map[string]interface{}{"programId": common.TokenProgramID},
+		map[string]interface{}{
+			"encoding": "jsonParsed",
+		}}
+
+	err := s.request(ctx, "getTokenAccountsByOwner", params, &res)
+	if err != nil {
+		return []Accounts{}, err
+	}
+	return res.Result.Value, nil
+}
+func (s *Client) GetTokenAccountByMint(ctx context.Context, account string, mint string) ([]Accounts, error) {
+	res := struct {
+		GeneralResponse
+		Result struct {
+			Context Context    `json:"context"`
+			Value   []Accounts `json:"value"`
+		} `json:"result"`
+	}{}
+	params := []interface{}{account,
+		map[string]interface{}{"mint": mint},
 		map[string]interface{}{
 			"encoding": "jsonParsed",
 		}}
