@@ -2,6 +2,7 @@ package tokenprog
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/ghostiam/binstruct"
 	"github.com/portto/solana-go-sdk/types"
@@ -221,7 +222,7 @@ type UiTokenAmount struct {
 
 func tokenAmountToUiAmount(amount uint64, decimals uint8) UiTokenAmount {
 	// Use `amount_to_ui_amount()` once spl_token is bumped to a version that supports it: https://github.com/solana-labs/solana-program-library/pull/211
-	amountDecimals := float64(amount) / float64(10^decimals)
+	amountDecimals := float64(amount) / math.Pow(10, float64(decimals))
 	uitokenAmt := UiTokenAmount{
 		UiAmount: amountDecimals,
 		Decimals: decimals,
