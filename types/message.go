@@ -91,7 +91,6 @@ func MessageDeserialize(messageData []byte) (Message, error) {
 		}
 		*list[i] = uint8(t)
 	}
-
 	accountCount, err := parseUvarint(&messageData)
 	if len(messageData) < int(accountCount)*32 {
 		return Message{}, errors.New("parse account error")

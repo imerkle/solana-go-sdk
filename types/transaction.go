@@ -86,7 +86,9 @@ func TransactionDeserialize(tx []byte) (Transaction, error) {
 	}
 
 	message, err := MessageDeserialize(tx)
-
+	if err != nil {
+		return Transaction{}, err
+	}
 	if uint64(message.Header.NumRequireSignatures) != signatureCount {
 		return Transaction{}, errors.New("numRequireSignatures is not equal to signatureCount")
 	}
