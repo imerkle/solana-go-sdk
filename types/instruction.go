@@ -13,6 +13,11 @@ type Instruction struct {
 	Accounts  []AccountMeta
 	Data      []byte
 }
+type ParsedAccKey struct {
+	PubKey     string `json:"pubkey"`
+	IsSigner   bool   `json:"signer"`
+	IsWritable bool   `json:"writable"`
+}
 
 type ParsedTransaction struct {
 	Signatures []string      `json:"signatures"`
@@ -20,7 +25,7 @@ type ParsedTransaction struct {
 }
 type ParsedMessage struct {
 	Header          MessageHeader       `json:"header"`
-	AccountKeys     []string            `json:"accountKeys"`
+	AccountKeys     []ParsedAccKey      `json:"accountKeys"`
 	RecentBlockhash string              `json:"recentBlockhash"`
 	Instructions    []ParsedInstruction `json:"instructions"`
 }
