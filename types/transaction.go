@@ -69,6 +69,7 @@ func (tx *Transaction) Serialize() ([]byte, error) {
 }
 
 func TransactionDeserialize(tx []byte) (Transaction, error) {
+	txBkp := tx
 	signatureCount, err := parseUvarint(&tx)
 	if err != nil {
 		return Transaction{}, fmt.Errorf("parse signature count error: %v", err)
@@ -87,7 +88,11 @@ func TransactionDeserialize(tx []byte) (Transaction, error) {
 
 	message, err := MessageDeserialize(tx)
 	if err != nil {
-		return Transaction{}, err
+		message, err = MessageDeserialize(txBkp)
+		signatures = make([]Signature, 0, 1)
+		if err != nil {
+			return Transaction{}, err
+		}
 	}
 	if uint64(message.Header.NumRequireSignatures) != signatureCount {
 		return Transaction{}, errors.New("numRequireSignatures is not equal to signatureCount")
