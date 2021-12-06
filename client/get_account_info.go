@@ -49,23 +49,31 @@ type GetAccountInfoResponse struct {
 }
 
 type GetAccountInfoParsedResponse struct {
-	Lamports  uint64  `json:"lamports"`
-	Owner     string  `json:"owner"`
-	Excutable bool    `json:"excutable"`
-	RentEpoch uint64  `json:"rentEpoch"`
-	Data      AccData `json:"data"`
+	Lamports  uint64      `json:"lamports"`
+	Owner     string      `json:"owner"`
+	Excutable bool        `json:"excutable"`
+	RentEpoch uint64      `json:"rentEpoch"`
+	Data      AccountData `json:"data"`
 }
 
-type Initialized struct {
-	Authority     string        `json:"authority"`
-	BlockHash     string        `json:"blockhash"`
-	FeeCalculator FeeCalculator `json:"feeCalculator"`
+type AccountInfo struct {
+	Authority            string               `json:"authority"`
+	BlockHash            string               `json:"blockhash"`
+	AccountFeeCalculator AccountFeeCalculator `json:"feeCalculator"`
 }
-type Nonce struct {
-	Initialized Initialized `json:"initialized"`
+
+type AccountData struct {
+	AccountParsed AccountParsed `json:"parsed"`
+	Program       string        `json:"program"`
+	Space         uint64        `json:"space"`
 }
-type AccData struct {
-	Nonce Nonce `json:"nonce"`
+
+type AccountParsed struct {
+	AccountInfo AccountInfo `json:"info"`
+}
+
+type AccountFeeCalculator struct {
+	LamportsPerSignature string `json:"lamportsPerSignature"`
 }
 
 func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAccountInfoConfig) (GetAccountInfoResponse, error) {
@@ -85,6 +93,7 @@ func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAcco
 	}
 	return res.Result.Value, nil
 }
+
 func (s *Client) GetAccountInfoParsed(ctx context.Context, account string) (GetAccountInfoParsedResponse, error) {
 	res := struct {
 		GeneralResponse
